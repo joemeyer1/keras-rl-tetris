@@ -17,7 +17,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 
 		state_num = 2**(4*8)*4*4*9*5  # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
 		action_num = 4 # rotate, left, right, step
-		P = {s : {a : [] for a in range(action_num)} for s in range(state_num)}
+		#P = {s : {a : [] for a in range(action_num)} for s in range(state_num)}
 
 		init_state_dist = []
 		for x in range(4):
@@ -28,16 +28,16 @@ class TetrisEnv(discrete.DiscreteEnv):
 		init_state_dist = np.array(init_state_dist)
 		init_state_dist /= init_state_dist.sum()
 
-		super(TetrisEnv, self).__init__(state_num, action_num, P, init_state_dist)
+		#super(TetrisEnv, self).__init__(state_num, action_num, P, init_state_dist)
 
 
 
 
-		# self.action_space = spaces.Discrete(5) 
+		self.action_space = spaces.Discrete(5) 
 
-		# self.observation_space = spaces.Discrete((2**(4*8))*4*4*9*5) # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
-		# #spaces.Tuple((spaces.Discrete(2**(4*8)), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
-		# # hacky, fix later (idk why the shape doesn't work normally)
+		self.observation_space = spaces.Tuple((spaces.Discrete(2**(4*8)), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
+		#spaces.Discrete((2**(4*8))*4*4*9*5) # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
+	
 		# size = -int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
 		# self.observation_space.shape = (np.zeros(size, dtype = int))
 		# #(np.zeros(2**(4*8)), np.zeros(4*9), np.zeros(4), np.zeros(5))
@@ -75,7 +75,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 
 
 # encode/decode style based on gym's taxi example
-def encode(self, obs):
+def encode(obs):
 	board, shape_y, shape_x, shape_rot, shape_type = obs
 	i = shape_type
 	i *= 5
@@ -88,7 +88,7 @@ def encode(self, obs):
 	i += board
 	return i
 
-def decode(self, i):
+def decode(i):
 	out = []
 	out.append(i % 9)
 	i = i // 9
