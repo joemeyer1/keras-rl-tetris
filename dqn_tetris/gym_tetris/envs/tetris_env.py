@@ -19,13 +19,13 @@ class TetrisEnv(discrete.DiscreteEnv):
 		action_num = 4 # rotate, left, right, step
 		#P = {s : {a : [] for a in range(action_num)} for s in range(state_num)}
 
-		init_state_dist = []
-		for x in range(4):
-			for rot in range(4):
-				for shape_type in range(5):
-					init_state_dist.append( encode([0, 0, x, rot, shape_type]) )
+		# init_state_dist = []
+		# for x in range(4):
+		# 	for rot in range(4):
+		# 		for shape_type in range(5):
+		# 			init_state_dist.append( encode([0, 0, x, rot, shape_type]) )
 
-		init_state_dist = np.array(init_state_dist)
+		# init_state_dist = np.array(init_state_dist)
 		#init_state_dist /= init_state_dist.sum()
 
 		#super(TetrisEnv, self).__init__(state_num, action_num, P, init_state_dist)
@@ -34,9 +34,8 @@ class TetrisEnv(discrete.DiscreteEnv):
 		self.action_space = spaces.Discrete(5) 
 
 		self.observation_space = spaces.Tuple((spaces.Discrete(2**(4*8)), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
-		size = 2**(4*8)*4*4*9*5
-		#-int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
-		self.observation_space.shape = np.zeros(size, dtype=int)
+		size = -int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
+		self.observation_space.shape = np.concatenate([np.zeros(2**(4*8), dtype=float), np.zeros(4*9, dtype=float), np.zeros(4, dtype=float), np.zeros(5, dtype=float)]).flatten()
 
 		#spaces.Discrete((2**(4*8))*4*4*9*5) # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
 	
@@ -49,10 +48,11 @@ class TetrisEnv(discrete.DiscreteEnv):
 		og_score = self.t.score
 		self.t.take_action(action)
 		shape_y, shape_x = t.shape_loc
-		obs = (self.t.ground, shape_y, shape_x, t)
+		# obs = (self.t.ground, shape_y, shape_x, t)
+		obs = np.concatenate(np.array(self.t.ground), np.array(shape_y), np.array(shape_x), np.array(shape_rot), np.array(shape_type))
 		reward = self.t.score - og_score
 		done = (self.t.score is 0)
-		return self.encode(obs), reward, done, {}
+		return obs, reward, done, {}
 
 		
 	def reset(self):
