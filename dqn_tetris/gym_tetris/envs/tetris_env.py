@@ -51,7 +51,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 		obs = (self.t.ground, shape_y, shape_x, t)
 		reward = self.t.score - og_score
 		done = (self.t.score is 0)
-		return self.decode(obs), reward, done, {}
+		return self.encode(obs), reward, done, {}
 
 		
 	def reset(self):
