@@ -26,29 +26,21 @@ class TetrisEnv(discrete.DiscreteEnv):
 					init_state_dist.append( encode([0, 0, x, rot, shape_type]) )
 
 		init_state_dist = np.array(init_state_dist)
-		init_state_dist /= init_state_dist.sum()
+		#init_state_dist /= init_state_dist.sum()
 
 		#super(TetrisEnv, self).__init__(state_num, action_num, P, init_state_dist)
-
-
 
 
 		self.action_space = spaces.Discrete(5) 
 
 		self.observation_space = spaces.Tuple((spaces.Discrete(2**(4*8)), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
+		size = -int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
+		self.observation_space.shape = np.zeros(size, dtype=int)
+
 		#spaces.Discrete((2**(4*8))*4*4*9*5) # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
 	
-		# size = -int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
-		# self.observation_space.shape = (np.zeros(size, dtype = int))
 		# #(np.zeros(2**(4*8)), np.zeros(4*9), np.zeros(4), np.zeros(5))
-		# #spaces.Tuple(spaces.Discrete(2**(4*8)*4*4*9*5))
 
-		# # spaces.Tuple((
-		# # 	spaces.Discrete(32),
-		# # 	spaces.Discrete(4)))
-		# self.seed()
-		# #act_space = [k for k in self.t.ACTION_MAP]
-		#self.observation_space = (self.t.full_board(), self.t.active_squares())
 
 
 
