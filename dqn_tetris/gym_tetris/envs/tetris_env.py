@@ -34,7 +34,8 @@ class TetrisEnv(discrete.DiscreteEnv):
 		self.action_space = spaces.Discrete(5) 
 
 		self.observation_space = spaces.Tuple((spaces.Discrete(2**(4*8)), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
-		size = -int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
+		size = 2**(4*8)*4*4*9*5
+		#-int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
 		self.observation_space.shape = np.zeros(size, dtype=int)
 
 		#spaces.Discrete((2**(4*8))*4*4*9*5) # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
