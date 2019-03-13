@@ -16,7 +16,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 		self.t = Tetris()
 
 		state_num = 2**(4*8)*4*4*9*5  # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
-		action_num = 5
+		action_num = 4 # rotate, left, right, step
 		P = {s : {a : [] for a in range(action_num)} for s in range(state_num)}
 
 		init_state_dist = []
