@@ -15,7 +15,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 	def __init__(self):
 		self.t = Tetris()
 
-		state_num = 2**(4*8)*4*4*9*5  # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
+		state_num = (self.t.height**self.t.width)*4*4*9*5  # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
 		action_num = 4 # rotate, left, right, step
 		#P = {s : {a : [] for a in range(action_num)} for s in range(state_num)}
 
@@ -31,11 +31,12 @@ class TetrisEnv(discrete.DiscreteEnv):
 		#super(TetrisEnv, self).__init__(state_num, action_num, P, init_state_dist)
 
 
-		self.action_space = spaces.Discrete(5) 
+		self.action_space = spaces.Discrete(4) 
 
-		self.observation_space = spaces.Tuple((spaces.Discrete(2**(4*8)), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
-		size = -int(-np.log(2**(4*8)*4*4*9*5)/np.log(2))
-		self.observation_space.shape = np.concatenate([np.zeros(2**(4*8), dtype=float), np.zeros(4*9, dtype=float), np.zeros(4, dtype=float), np.zeros(5, dtype=float)]).flatten()
+		self.observation_space = spaces.Tuple((spaces.Discrete(self.t.height**self.t.width), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
+		size = ((self.t.height**self.t.width)*4*4*9*5)
+		self.observation_space.shape = np.zeros(size, dtype=int)
+		#np.concatenate([np.zeros(2**(4*8), dtype=float), np.zeros(4*9, dtype=float), np.zeros(4, dtype=float), np.zeros(5, dtype=float)]).flatten()
 
 		#spaces.Discrete((2**(4*8))*4*4*9*5) # 4x8 board [filled or not], 4*9 active-shape locations, 4 rotation positions, 5 shape types
 	
@@ -49,7 +50,8 @@ class TetrisEnv(discrete.DiscreteEnv):
 		self.t.take_action(action)
 		shape_y, shape_x = t.shape_loc
 		# obs = (self.t.ground, shape_y, shape_x, t)
-		obs = np.concatenate(np.array(self.t.ground), np.array(shape_y), np.array(shape_x), np.array(shape_rot), np.array(shape_type))
+		obs = np.array([top_row(self.t), shape_y, shape_x, shape_rot, shape_type]).flatten()
+		np.concatenate(np.array(self.t.ground), np.array(shape_y), np.array(shape_x), np.array(shape_rot), np.array(shape_type))
 		reward = self.t.score - og_score
 		done = (self.t.score is 0)
 		return obs, reward, done, {}
@@ -68,7 +70,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 
 
 # encode/decode style based on gym's taxi example
-def encode(obs):
+def encode(obs, t):
 	board, shape_y, shape_x, shape_rot, shape_type = obs
 	i = shape_type
 	i *= 5
@@ -78,12 +80,12 @@ def encode(obs):
 	i *= 4
 	i += shape_y
 	i *= 9
-	i += board
+	i += encode_top_row(board, t)
 	return i
 
-def decode(i):
+def decode(i, t):
 	out = []
-	out.append(i % 9)
+	out.append(decode_top_row(i % 9, t))
 	i = i // 9
 	out.append(i % 4)
 	i = i // 4
@@ -99,7 +101,31 @@ def decode(i):
 
 
 
+def top_row(tetris):
+	top = []
+	for x in range(tetris.width):
+		for y in range(tetris.height):
+			if tetris.board[y][x]:
+				top.append(y)
+				break
 
+
+
+
+
+
+def encode_top_row(top_row, tetris):
+	ret = 0
+	for x in range(tetris.width):
+		ret += top_row[x]
+		ret *= tetris.height
+
+def decode_top_row(top_row, tetris):
+	out = []
+	for x in range(tetris.width):
+		out.append(top_row%tetris.height)
+		top_row // tetris.height
+	return out
 
 
 
