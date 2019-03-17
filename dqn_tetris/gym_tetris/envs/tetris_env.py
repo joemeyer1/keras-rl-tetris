@@ -50,7 +50,7 @@ class TetrisEnv(discrete.DiscreteEnv):
 		self.t.take_action(action)
 		shape_y, shape_x = t.shape_loc
 		# obs = (self.t.ground, shape_y, shape_x, t)
-		obs = np.array([top_row(self.t), shape_y, shape_x, shape_rot, shape_type]).flatten()
+		obs = np.array([top_row(self.t)]+[shape_y, shape_x, shape_rot, shape_type])
 		np.concatenate(np.array(self.t.ground), np.array(shape_y), np.array(shape_x), np.array(shape_rot), np.array(shape_type))
 		reward = self.t.score - og_score
 		done = (self.t.score is 0)
