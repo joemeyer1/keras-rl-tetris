@@ -33,8 +33,8 @@ class TetrisEnv(discrete.DiscreteEnv):
 
 		self.action_space = spaces.Discrete(4) 
 
-		self.observation_space = spaces.Tuple((spaces.Discrete(self.t.height**self.t.width), spaces.Discrete(4*9), spaces.Discrete(4), spaces.Discrete(5)))
-		size = ((self.t.height**self.t.width)*4*4*9*5)
+		self.observation_space = spaces.Tuple((spaces.Discrete(self.t.height), spaces.Discrete(self.t.height), spaces.Discrete(self.t.height), spaces.Discrete(self.t.height), spaces.Discrete(9), spaces.Discrete(4), spaces.Discrete(4), spaces.Discrete(5)))
+		size = 8
 		self.observation_space.shape = np.zeros(size, dtype=int)
 		#np.concatenate([np.zeros(2**(4*8), dtype=float), np.zeros(4*9, dtype=float), np.zeros(4, dtype=float), np.zeros(5, dtype=float)]).flatten()
 
